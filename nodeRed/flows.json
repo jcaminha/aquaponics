@@ -1,1 +1,289 @@
-[{"id":"957a4843.0b482","type":"tab","label":"Flow 1","disabled":false,"info":""},{"id":"48d270a1.81e12","type":"mqtt out","z":"957a4843.0b482","name":"","topic":"sensorTelemetry","qos":"","retain":"","broker":"51d677fe.a217b8","x":280,"y":100,"wires":[]},{"id":"735f0b8b.5b688c","type":"inject","z":"957a4843.0b482","name":"sensor2","topic":"teste","payload":"{\"device\":\"3\",\"temperature\":22,\"humidity\":48,\"timestamp\":\"2020-04-30 22:22:22\"}","payloadType":"json","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":110,"y":100,"wires":[["48d270a1.81e12"]]},{"id":"5e475e82.18f4d8","type":"mqtt in","z":"957a4843.0b482","name":"","topic":"sensorTelemetry","qos":"2","datatype":"auto","broker":"51d677fe.a217b8","x":280,"y":160,"wires":[["98b6ea87.eb0e18"]]},{"id":"7f64f940.423ae8","type":"debug","z":"957a4843.0b482","name":"","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"false","x":730,"y":320,"wires":[]},{"id":"c113f92c.9684f8","type":"sqlite","z":"957a4843.0b482","mydb":"40da7c34.fb3894","sqlquery":"msg.topic","sql":"","name":"sensors.db","x":530,"y":260,"wires":[["7f64f940.423ae8","e0e156ae.a567a8"]]},{"id":"67314044.345e6","type":"inject","z":"957a4843.0b482","name":"CREATE","topic":"CREATE TABLE sensoreadings(id INTEGER PRIMARY KEY AUTOINCREMENT, device TEXT, raw_data TEXT, timestamp TEXT)","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":140,"y":440,"wires":[["c113f92c.9684f8"]]},{"id":"eb0a4057.46bbf","type":"inject","z":"957a4843.0b482","name":"DROP","topic":"DROP TABLE sensoreadings","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":150,"y":500,"wires":[["c113f92c.9684f8"]]},{"id":"96c24546.f456d8","type":"inject","z":"957a4843.0b482","name":"INSERT","topic":"INSERT INTO sensoreadings(device, raw_data, timestamp) VALUES ('1','json', datetime('now', 'localtime'))","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":140,"y":320,"wires":[["c113f92c.9684f8"]]},{"id":"543490cb.c0241","type":"inject","z":"957a4843.0b482","name":"SELECT","topic":"SELECT * from sensoreadings","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":140,"y":380,"wires":[["c113f92c.9684f8"]]},{"id":"98b6ea87.eb0e18","type":"function","z":"957a4843.0b482","name":"persistSensorData","func":"// payload = JSON.stringify(msg.payload);\npayload = msg.payload;\ndata = JSON.parse(msg.payload);\n\nmsg.topic = \"INSERT INTO sensoreadings(device, raw_data, timestamp) VALUES (\"+data.device+\",'\"+payload+\"', datetime('now', 'localtime'))\"\n\nreturn msg;","outputs":1,"noerr":0,"x":510,"y":160,"wires":[["c113f92c.9684f8"]]},{"id":"e0e156ae.a567a8","type":"http response","z":"957a4843.0b482","name":"devices.response","statusCode":"","headers":{},"x":750,"y":260,"wires":[]},{"id":"bda4076b.b8d5b","type":"http in","z":"957a4843.0b482","name":"devices.request","url":"/devices","method":"get","upload":false,"swaggerDoc":"","x":120,"y":260,"wires":[["7da579e8.b0bb08"]]},{"id":"7da579e8.b0bb08","type":"function","z":"957a4843.0b482","name":"listDevices","func":"msg.topic = \"SELECT DISTINCT device from sensoreadings\";\nreturn msg;","outputs":1,"noerr":0,"x":350,"y":260,"wires":[["c113f92c.9684f8"]]},{"id":"bacc096.e3ed678","type":"comment","z":"957a4843.0b482","name":"To Do","info":"[ ] Implement Device Detail API","x":90,"y":180,"wires":[]},{"id":"51d677fe.a217b8","type":"mqtt-broker","z":"","name":"mqtt-broker","broker":"localhost","port":"1883","clientid":"","usetls":false,"compatmode":false,"keepalive":"60","cleansession":true,"birthTopic":"","birthQos":"0","birthPayload":"","closeTopic":"","closeQos":"0","closePayload":"","willTopic":"","willQos":"0","willPayload":""},{"id":"40da7c34.fb3894","type":"sqlitedb","z":"","db":"/home/jean/sensors","mode":"RWC"}]
+[
+    {
+        "id": "957a4843.0b482",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "48d270a1.81e12",
+        "type": "mqtt out",
+        "z": "957a4843.0b482",
+        "name": "",
+        "topic": "deviceTelemetry",
+        "qos": "",
+        "retain": "",
+        "broker": "51d677fe.a217b8",
+        "x": 280,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "735f0b8b.5b688c",
+        "type": "inject",
+        "z": "957a4843.0b482",
+        "name": "tank01",
+        "topic": "deviceTelemetry",
+        "payload": "{\"device\":\"tank01\",\"kind\":\"temperature\",\"dataread\":22}",
+        "payloadType": "json",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 110,
+        "y": 100,
+        "wires": [
+            [
+                "48d270a1.81e12"
+            ]
+        ]
+    },
+    {
+        "id": "5e475e82.18f4d8",
+        "type": "mqtt in",
+        "z": "957a4843.0b482",
+        "name": "",
+        "topic": "deviceTelemetry",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "51d677fe.a217b8",
+        "x": 280,
+        "y": 160,
+        "wires": [
+            [
+                "98b6ea87.eb0e18"
+            ]
+        ]
+    },
+    {
+        "id": "c113f92c.9684f8",
+        "type": "sqlite",
+        "z": "957a4843.0b482",
+        "mydb": "40da7c34.fb3894",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "sensors.db",
+        "x": 530,
+        "y": 260,
+        "wires": [
+            [
+                "55393da1.da7efc",
+                "d620ebe6.f9e73"
+            ]
+        ]
+    },
+    {
+        "id": "67314044.345e6",
+        "type": "inject",
+        "z": "957a4843.0b482",
+        "name": "CREATE",
+        "topic": "CREATE TABLE readings(id INTEGER PRIMARY KEY AUTOINCREMENT, device TEXT, kind TEXT, dataread NUMERIC,timeread TEXT, processed INTEGER)",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 120,
+        "y": 380,
+        "wires": [
+            [
+                "c113f92c.9684f8"
+            ]
+        ]
+    },
+    {
+        "id": "eb0a4057.46bbf",
+        "type": "inject",
+        "z": "957a4843.0b482",
+        "name": "DROP",
+        "topic": "DROP TABLE readings",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 130,
+        "y": 440,
+        "wires": [
+            [
+                "c113f92c.9684f8"
+            ]
+        ]
+    },
+    {
+        "id": "96c24546.f456d8",
+        "type": "inject",
+        "z": "957a4843.0b482",
+        "name": "INSERT",
+        "topic": "INSERT INTO  readings(device, kind, dataread, timeread, processed) VALUES (\"tank0\", \"water.level\", 90, datetime('now'),0)",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 120,
+        "y": 260,
+        "wires": [
+            [
+                "c113f92c.9684f8"
+            ]
+        ]
+    },
+    {
+        "id": "543490cb.c0241",
+        "type": "inject",
+        "z": "957a4843.0b482",
+        "name": "SELECT",
+        "topic": "SELECT * from readings",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 120,
+        "y": 320,
+        "wires": [
+            [
+                "c113f92c.9684f8"
+            ]
+        ]
+    },
+    {
+        "id": "98b6ea87.eb0e18",
+        "type": "function",
+        "z": "957a4843.0b482",
+        "name": "persistSensorData",
+        "func": "var data = JSON.parse(msg.payload);\n\nmsg.topic = \"INSERT INTO readings(device, kind, dataread, timeread, processed) VALUES ('\"+data.device+\"','\"+data.kind+\"',\"+data.dataread+\", datetime('now'), 0)\"\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 510,
+        "y": 160,
+        "wires": [
+            [
+                "c113f92c.9684f8"
+            ]
+        ]
+    },
+    {
+        "id": "ea67d802.6e1c8",
+        "type": "http in",
+        "z": "957a4843.0b482",
+        "name": "devices.request",
+        "url": "/devices",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 520,
+        "wires": [
+            [
+                "26a69d57.c4ccda"
+            ]
+        ]
+    },
+    {
+        "id": "55393da1.da7efc",
+        "type": "http response",
+        "z": "957a4843.0b482",
+        "name": "devices.response",
+        "statusCode": "",
+        "headers": {},
+        "x": 750,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "26a69d57.c4ccda",
+        "type": "function",
+        "z": "957a4843.0b482",
+        "name": "list.devices",
+        "func": "msg.topic = \"SELECT DISTINCT device from readings\"\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 330,
+        "y": 520,
+        "wires": [
+            [
+                "c113f92c.9684f8"
+            ]
+        ]
+    },
+    {
+        "id": "7597d519.23c43c",
+        "type": "http in",
+        "z": "957a4843.0b482",
+        "name": "device.request",
+        "url": "/device/:device",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 580,
+        "wires": [
+            [
+                "c5e0818f.b2e588"
+            ]
+        ]
+    },
+    {
+        "id": "d620ebe6.f9e73",
+        "type": "http response",
+        "z": "957a4843.0b482",
+        "name": "devices.response",
+        "statusCode": "",
+        "headers": {},
+        "x": 750,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "c5e0818f.b2e588",
+        "type": "function",
+        "z": "957a4843.0b482",
+        "name": "show.device.detail",
+        "func": "var device = msg.req.params.device\n\nmsg.topic = \"SELECT * from readings WHERE device = '\"+device+\"'\"\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 350,
+        "y": 580,
+        "wires": [
+            [
+                "c113f92c.9684f8"
+            ]
+        ]
+    },
+    {
+        "id": "51d677fe.a217b8",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "mqtt-broker",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "40da7c34.fb3894",
+        "type": "sqlitedb",
+        "z": "",
+        "db": "/home/jean/sensors",
+        "mode": "RWC"
+    }
+]
